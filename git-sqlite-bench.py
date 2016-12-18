@@ -9,6 +9,7 @@ from subprocess import check_call, check_output
 
 
 WORKDIR = os.path.join(os.path.abspath(os.path.dirname(__file__)), 'work')
+GITDIR = os.path.join(WORKDIR, '.git')
 DBFILE = os.path.join(WORKDIR, 'bench.db')
 DUMPFILE = os.path.join(WORKDIR, 'bench.sql')
 
@@ -18,6 +19,23 @@ def database():
     db = sqlite3.connect(DBFILE)
     yield db
     db.close()
+
+
+def print_disk_usage(title, path):
+    print(title)
+    check_call(["du", "-hs", path])
+
+
+def crunch_final_stats():
+    print()
+    print_disk_usage("Size of final SQL dump:", DUMPFILE)
+    print()
+    print_disk_usage("Size of final .git dir:", GITDIR)
+    print()
+    check_call(["git", "gc", "--aggressive"])
+    print()
+    print_disk_usage("Size of final .git dir after `git gc --aggressive`:",
+                     GITDIR)
 
 
 def dump_db_into_git(msg):
@@ -83,3 +101,4 @@ def bench(ntable, nfield, nop):
 
 if __name__ == "__main__":
     bench(2, 10, 1000)
+    crunch_final_stats()
