@@ -52,8 +52,9 @@ def bench(ntable, nfield, nop):
         cur = db.cursor()
         for t in range(ntable):
             cur.execute(create_table(t, nfield))
-        for o in range(nop):
-            print("Operation #{}".format(o))
+    for o in range(nop):
+        print("Operation #{}".format(o))
+        with database() as db:
             t = random.randrange(ntable)
             op = random.choice(['insert', 'update']) \
                  if nrow[t] else 'insert'
