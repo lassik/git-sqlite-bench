@@ -50,7 +50,7 @@ def random_update(table, nfield, nrow):
         table,
         ",".join('field{}={}'.format(f, randval())
                  for f in fields),
-        random.randrange(nrow))
+        random.randint(1, nrow))
 
 
 def bench(ntable, nfield, nop):
