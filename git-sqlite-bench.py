@@ -1,5 +1,6 @@
 #! /usr/bin/env python3
 
+import argparse
 import datetime
 import os
 import random
@@ -112,5 +113,8 @@ def bench(ntable, nfield, nop):
 
 
 if __name__ == "__main__":
-    bench(2, 10, 1000)
+    parser = argparse.ArgumentParser()
+    parser.add_argument('n', nargs='?', type=int, default=1000)
+    args = parser.parse_args()
+    bench(2, 10, args.n)
     crunch_final_stats()
