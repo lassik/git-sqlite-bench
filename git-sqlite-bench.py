@@ -6,6 +6,7 @@ import os
 import random
 import shutil
 import sqlite3
+import string
 from contextlib import contextmanager
 from subprocess import check_call, check_output
 
@@ -52,13 +53,14 @@ def dump_db_into_git(msg):
 
 
 def randval():
-    return str(random.randrange(0, 2**24))
+    return "'{}'".format(''.join(random.choice(string.ascii_lowercase)
+                                 for _ in range(random.randint(10, 40))))
 
 
 def create_table(t, nfield):
     return "create table table{} ({})".format(
         t, ",".join(["key integer primary key"] +
-                    ["field{} integer".format(f)
+                    ["field{} text".format(f)
                      for f in range(nfield)]))
 
 
