@@ -1,5 +1,5 @@
-#!/bin/sh -
-set -eu
+#!/bin/bash -
+set -eu -o pipefail
 exec 2>&1
 cd "$(dirname "$0")"
 run="run-$(date '+%s')"
