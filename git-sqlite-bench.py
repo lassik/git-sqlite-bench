@@ -1,5 +1,6 @@
 #! /usr/bin/env python3
 
+import datetime
 import os
 import random
 import shutil
@@ -12,6 +13,11 @@ WORKDIR = os.path.join(os.path.abspath(os.path.dirname(__file__)), 'work')
 GITDIR = os.path.join(WORKDIR, '.git')
 DBFILE = os.path.join(WORKDIR, 'bench.db')
 DUMPFILE = os.path.join(WORKDIR, 'bench.sql')
+MILLISECFILE = os.path.join(WORKDIR, 'millisec')
+
+
+def milliseconds_since(start):
+    return int(1000 * (datetime.datetime.now() - start).total_seconds())
 
 
 @contextmanager
@@ -72,6 +78,7 @@ def random_update(table, nfield, nrow):
 
 
 def bench(ntable, nfield, nop):
+    millisec = [0] * nop
     nrow = {t: 0 for t in range(ntable)}
     if os.path.isdir(WORKDIR):
         shutil.rmtree(WORKDIR)
@@ -84,6 +91,7 @@ def bench(ntable, nfield, nop):
             cur.execute(create_table(t, nfield))
     dump_db_into_git("Commit empty database")
     for o in range(nop):
+        opstart = datetime.datetime.now()
         t = random.randrange(ntable)
         op = random.choice(['insert', 'update']) \
              if nrow[t] else 'insert'
@@ -97,6 +105,10 @@ def bench(ntable, nfield, nop):
                 cur.execute(random_update(t, nfield, nrow[t]))
             db.commit()
         dump_db_into_git(opmsg)
+        millisec[o] = milliseconds_since(opstart)
+    with open(MILLISECFILE, "w") as out:
+        for ms in millisec:
+            print(ms, file=out)
 
 
 if __name__ == "__main__":
