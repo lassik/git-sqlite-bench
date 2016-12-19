@@ -96,7 +96,7 @@ def bench(ntable, nfield, nop):
         t = random.randrange(ntable)
         op = random.choice(['insert', 'update']) \
              if nrow[t] else 'insert'
-        opmsg = "Operation #{}: {} table #{}".format(o, op, t)
+        opmsg = "Operation #{}: {} table #{}".format(o+1, op, t)
         with database() as db:
             cur = db.cursor()
             if op == 'insert':
